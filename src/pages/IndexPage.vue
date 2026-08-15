@@ -2,7 +2,7 @@
   <q-page class="flex flex-center col-12 q-pa-lg">
 
     <div class="form-content">
-      <h1>Fale conosco</h1>
+      <h1>Fale com nossa empresa</h1>
       <p>Para saber mais informações</p>
       <q-form class="column q-gutter-y-md" @submit="validar">
         <q-input label="Nome" v-model="nome" :rules="[(val)=> !! val || 'Preencha o campo!']" outlined type="text"/>
