@@ -113,7 +113,7 @@ p{
 
 .form-content{
   box-shadow:0 0 10px #00000050;
-  width:100%;
+  width:95%;
   max-width:490px;
   padding: 40px 30px;
 }
