@@ -17,7 +17,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above :width="260" class="bg-grey-1">
+    <q-drawer v-model="leftDrawerOpen" :width="260" class="bg-grey-1">
       <q-list padding>
         <q-item-label header>Menu</q-item-label>
 
