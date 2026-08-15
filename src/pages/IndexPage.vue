@@ -4,7 +4,7 @@
     <div class="form-content">
       <h1>Fale com nossa empresa</h1>
       <p>Para saber mais informações</p>
-      <q-form class="column q-gutter-y-md" @submit="validar">
+      <q-form ref="formContato" class="column q-gutter-y-md" @submit="validar">
         <q-input label="Nome" v-model="nome" :rules="[(val)=> !! val || 'Preencha o campo!']" outlined type="text"/>
         <q-input label="E-mail" v-model="email" :rules="[(val)=> !! val || 'Preencha o campo!']" outlined type="text"/>
         <q-input label="Telefone" mask="(##) #####-####" fill-mask unmasked-value v-model="telefone" :rules="[(val)=> !! val || 'Preencha o campo!']" outlined type="tel"/>
@@ -23,6 +23,12 @@
 
 <script setup>
 import {ref} from 'vue';
+import {useQuasar} from 'quasar';
+
+const carregando  = ref(false);
+const formContato = ref(null);
+const $q = useQuasar();
+import axios from 'axios';
 
 const nome = ref('');
 const email = ref('');
@@ -30,8 +36,60 @@ const telefone = ref('');
 const assunto = ref('');
 const mensagem = ref('');
 
-const validar=()=>{
-  alert("campos preenchidos!");
+// Sem o emailjs
+// const validar=()=>{
+//   alert("campos preenchidos!");
+// }
+
+
+// com o emailjs
+const validar=async () =>{
+  carregando.value = true;
+// Lendo do arquivo .env
+  const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+  // Payload exigido pela API REST do EmailJS
+  const payload = {
+    service_id: serviceId,
+    template_id: templateId,
+    user_id: publicKey, 
+    template_params: {
+      from_name: nome.value,
+      from_email: email.value,
+      telefone: telefone.value,
+      subject: assunto.value,
+      message: mensagem.value
+    }
+  };
+
+  try {
+    await axios.post('https://api.emailjs.com/api/v1.0/email/send', payload);
+   
+    $q.notify({
+    type: 'positive',
+    message: 'Mensagem enviada com sucesso!',
+    position: 'top',
+    timeout: 2000
+  });
+
+    // Limpar campos
+    nome.value = '';
+    email.value = '';
+    telefone.value = '';
+    assunto.value = '';
+    mensagem.value = '';
+
+    if (formContato.value) {
+      formContato.value.resetValidation();
+    }
+  } catch (error) {
+    console.error('Erro ao enviar via Axios:', error);
+    alert('Erro ao enviar a mensagem. Verifique os dados e tente novamente.');
+  } finally {
+    carregando.value = false;
+  }
 }
 
 
